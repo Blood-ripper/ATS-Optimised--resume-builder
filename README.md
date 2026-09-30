@@ -4,7 +4,7 @@ A free, guided resume builder for students. Answer 13 short steps and download a
 
 Everything runs in your browser: no sign-up, no API key, no usage limit.
 
-**Live site:** _link coming after the first deploy_
+**Live site:** [ai-ats-resume-builder-delta.vercel.app](https://ai-ats-resume-builder-delta.vercel.app)
 
 ## What it does
 
