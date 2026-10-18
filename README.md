@@ -14,7 +14,13 @@ Everything runs in your browser: no sign-up, no API key, no usage limit.
 - **Summary generator**: writes a two to three sentence summary from your answers. You can edit it.
 - **Role keyword check**: compares your resume with common keywords for 8 fresher roles (software, full stack, data analyst, data science/ML, cybersecurity, cloud/DevOps, IT support, product/project management).
 - **Fix before applying**: a checklist of specific problems, such as missing links, bullets without numbers, or a phone number without a country code.
-- **Certification roadmap**: 18 certifications, checked on 30 September 2026, with free options first. Ones you already hold are skipped.
+- **Certification roadmap**: 48+ certifications across 9 tracks (software, web, cloud/DevOps, cybersecurity, data/AI, IT support, product/PM, business & entrepreneurship, and employer job simulations), checked on 18 October 2026.
+  - A **90-day plan** per role: a free quick win this week, a core credential within 4-6 weeks, and the bigger paid/timed one by month 3.
+  - Flags which role-keyword gaps each certification actually closes.
+  - Search, filter by cost (free end-to-end / free for students / free-to-learn-paid-exam / financial aid) and by India-recognised only.
+  - Track progress per certification (not started / planned / in progress / done); marking one done adds it straight to your resume draft.
+  - A "free vouchers and student packs" section (GitHub Student Pack, Azure/AWS/GCP student credits, Coursera financial aid, JetBrains) for unlocking the ones that normally cost money.
+  - Copy the whole plan as plain text to paste into a notes app.
 - **ATS view**: shows the plain text a resume parser reads from your PDF.
 - **Exports**: a text-based A4 PDF in a single column, and an editable Word (.docx) file, named `Firstname-Lastname-Resume`.
 

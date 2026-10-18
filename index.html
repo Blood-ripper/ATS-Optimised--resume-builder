@@ -293,6 +293,47 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
 .cert-row { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .cert-row .why { margin: 0; color: var(--muted); font-size: 14px; }
 .checked-note { font-size: 13px; color: var(--muted); margin: 18px 0 0; }
+/* ---- Certification roadmap ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.plan-block { margin-bottom: 26px; }
+.gap-line { margin: 0 0 12px; font-size: 14px; color: var(--ink); background: var(--warn-soft); border-left: 3px solid var(--warn); border-radius: 0 8px 8px 0; padding: 9px 12px; }
+.plan { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.plan-stage { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 12px; padding: 13px 16px; }
+.plan-stage .when { font: 600 12px/1.2 var(--f-mono); letter-spacing: .03em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+.plan-stage .pname { font-weight: 600; display: block; }
+.plan-stage .pwhy { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.plan-actions { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 12px; }
+.muted-count { font-size: 13px; color: var(--muted); margin: 0; }
+.cert-controls { display: grid; gap: 10px; padding: 14px 0 4px; border-top: 1px solid var(--line); }
+.cert-controls input[type="search"] { width: 100%; max-width: 440px; font: 15px/1.4 var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.cert-controls input[type="search"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 13px/1 var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 8px 13px; cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); cursor: pointer; }
+.toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+.cert-card { display: grid; gap: 7px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.cert-card.is-done .cname { text-decoration: line-through; color: var(--muted); }
+.cert-card .cname { font-weight: 600; }
+.cert-card .why { margin: 0; color: var(--muted); font-size: 14px; }
+.cost.voucher { background: var(--accent-soft); color: var(--accent); }
+.rec { font: 500 12px/1.2 var(--f-mono); padding: 4px 8px; border-radius: 99px; white-space: nowrap; background: var(--surface-2); color: var(--muted); }
+.rec.govt { background: var(--ok-soft); color: var(--ok); }
+.skillchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.skillchip { font: 500 12px/1.2 var(--f-body); padding: 4px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+.skillchip.gap { background: var(--mark); color: var(--on-mark); font-weight: 600; }
+.cert-actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13.5px; }
+.cert-actions select { font: 13px/1.2 var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.cert-actions select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.perks { margin-top: 30px; padding-top: 4px; }
+.perks h3 { font-family: var(--f-display); font-stretch: 106%; font-weight: 700; font-size: 19px; margin: 0; }
+.track-note { margin: 2px 0 6px; font-size: 14px; color: var(--muted); }
+.perk-row { display: grid; gap: 3px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.perk-row .pname { font-weight: 600; }
+.perk-row p { margin: 0; font-size: 14px; color: var(--muted); }
+.empty-note { font-size: 14px; color: var(--muted); padding: 18px 0; margin: 0; }
+
 .tips { list-style: none; margin: 0; padding: 0; max-width: 780px; }
 .tips li { padding: 14px 0; border-bottom: 1px solid var(--line); }
 .tips b { display: block; font-size: 15.5px; margin-bottom: 2px; }
@@ -541,12 +582,34 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
       </div>
 
       <div id="panel-certs" role="tabpanel" aria-labelledby="tab-certs" hidden>
-        <div id="picksBlock">
-          <p class="panel-intro" id="picksIntro">Picked for your target role, skipping the ones you already hold. Best first.</p>
-          <ol id="picks" class="picks"></ol>
+        <div id="planBlock" class="plan-block">
+          <p class="panel-intro" id="picksIntro">Picked for your target role, skipping the ones you already hold.</p>
+          <p class="gap-line" id="gapLine" hidden></p>
+          <ol id="plan" class="plan"></ol>
+          <div class="plan-actions">
+            <button type="button" class="linkbtn" id="copyPlanBtn">Copy this plan as text</button>
+            <span class="muted-count" id="planCount"></span>
+          </div>
         </div>
+
+        <div class="cert-controls">
+          <label class="sr-only" for="certSearch">Search certifications</label>
+          <input type="search" id="certSearch" placeholder="Search a certification, provider or skill" autocomplete="off">
+          <div class="chips" id="costFilter" role="group" aria-label="Filter by cost"></div>
+          <label class="toggle"><input type="checkbox" id="indiaOnly"> India-recognised only</label>
+          <p class="muted-count" id="certCount"></p>
+        </div>
+
         <div id="allCerts"></div>
-        <p class="checked-note">Checked on 30 September 2026. Offers and exam prices change, so confirm on the official page before you pay. Microsoft's AI-900 exam retired on 30 June 2026; AI-901 replaces it.</p>
+        <p class="empty-note" id="certEmpty" hidden>Nothing matches that filter. Clear the search or switch the cost filter back to All.</p>
+
+        <section class="perks" id="perksBlock">
+          <h3>Free vouchers and student packs</h3>
+          <p class="track-note">These are not certifications themselves. They are how students stop paying for the ones that normally cost money.</p>
+          <div id="perksList"></div>
+        </section>
+
+        <p class="checked-note">Checked on 18 October 2026. Offers, vouchers and exam prices change often, so confirm on the official page before you pay. Microsoft's AI-900 exam retired on 30 June 2026; AI-901 replaces it.</p>
       </div>
 
       <div id="panel-tips" role="tabpanel" aria-labelledby="tab-tips" hidden>
@@ -583,45 +646,111 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
   const AREAS = ['Name, email, phone', 'LinkedIn and GitHub', 'City and state', 'Target role', 'Education and CGPA', 'Programming languages', 'Tools and frameworks', 'Project 1', 'Project 2', 'Project 3', 'Certifications', 'Achievements', 'Work experience'];
 
   const CERTS = [
-    { id: 'hackerrank', track: 'start', name: 'HackerRank Skills Certification', provider: 'HackerRank', cost: 'Free', type: 'free', why: 'Short timed tests in Python, Java, SQL or problem solving. Add the verified badge link to your resume.', url: 'https://www.hackerrank.com/skills-verification', match: /hackerrank/i },
-    { id: 'github-foundations', track: 'start', name: 'GitHub Foundations', provider: 'GitHub', cost: 'Free for verified students', type: 'free', why: 'Proves the Git and GitHub basics every team expects. Verified students can claim a free exam voucher through GitHub Education while supplies last.', url: 'https://education.github.com/experiences/foundations_certificate', match: /github\s*foundations/i },
-    { id: 'freecodecamp', track: 'start', name: 'freeCodeCamp certifications', provider: 'freeCodeCamp', cost: 'Free', type: 'free', why: 'Each certification requires building projects, which gives you more to link on your resume.', url: 'https://www.freecodecamp.org/learn/', match: /freecodecamp/i },
-    { id: 'nptel', track: 'start', name: 'NPTEL course with certification exam', provider: 'NPTEL (IITs and IISc)', cost: 'Free course · paid exam', type: 'exam', why: 'Pick a core subject such as DSA, DBMS or cloud computing. The exam certificate carries the institute\'s name.', url: 'https://nptel.ac.in/', match: /nptel|swayam/i },
-    { id: 'oci-foundations', track: 'cloud', name: 'Oracle Cloud Infrastructure Foundations Associate', provider: 'Oracle University', cost: 'Free course and exam', type: 'free', why: 'A proctored cloud certification from a major vendor that costs nothing.', url: 'https://blogs.oracle.com/oracleuniversity/oci-certification-learning-paths-and-exams-2026-updates-now-available', match: /^(?!.*\bai\b).*(oci|oracle cloud).*foundations/i },
-    { id: 'az-900', track: 'cloud', name: 'Microsoft Azure Fundamentals (AZ-900)', provider: 'Microsoft Learn', cost: 'Free learning path · paid exam', type: 'exam', why: 'Cloud concepts, core Azure services, pricing and security basics.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/', match: /az-?900|azure fundamentals/i },
-    { id: 'aws-ccp', track: 'cloud', name: 'AWS Certified Cloud Practitioner (CLF-C02)', provider: 'AWS', cost: 'Free prep · US$100 exam', type: 'exam', why: 'The entry AWS certification, with a free prep plan on AWS Skill Builder.', url: 'https://aws.amazon.com/certification/certified-cloud-practitioner/', match: /cloud practitioner|clf-?c0\d/i },
-    { id: 'sc-900', track: 'security', name: 'Microsoft Security, Compliance, and Identity Fundamentals (SC-900)', provider: 'Microsoft Learn', cost: 'Free learning path · paid exam', type: 'exam', why: 'Identity, access and security basics used in SOC and security analyst roles.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/', match: /sc-?900|security,? compliance/i },
-    { id: 'ccst-cyber', track: 'security', name: 'Cisco CCST Cybersecurity (100-160)', provider: 'Cisco Networking Academy', cost: 'Free course · US$125 exam', type: 'exam', why: 'A hands-on junior analyst course with a Cisco exam at the end.', url: 'https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccst-cybersecurity.html', match: /ccst.*cyber|cyber.*ccst/i },
-    { id: 'google-cyber', track: 'security', name: 'Google Cybersecurity Certificate', provider: 'Coursera', cost: 'Paid · financial aid available', type: 'aid', why: 'SIEM tools, Linux, SQL and Python for entry security roles.', url: 'https://www.coursera.org/professional-certificates/google-cybersecurity', match: /google.*cyber/i },
-    { id: 'ai-901', track: 'data', name: 'Microsoft Azure AI Fundamentals (AI-901)', provider: 'Microsoft Learn', cost: 'Free learning path · paid exam', type: 'exam', why: 'Replaces AI-900, which retired on 30 June 2026. Covers machine learning, vision, language and generative AI on Azure.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-fundamentals/', match: /ai-?90[01]|azure ai fundamentals/i },
-    { id: 'oci-ai', track: 'data', name: 'Oracle Cloud Infrastructure AI Foundations Associate', provider: 'Oracle University', cost: 'Free course and exam', type: 'free', why: 'Machine learning and generative AI basics with a free proctored exam.', url: 'https://blogs.oracle.com/oracleuniversity/oci-certification-learning-paths-and-exams-2026-updates-now-available', match: /(oci|oracle).*\bai\b.*foundations/i },
-    { id: 'dp-900', track: 'data', name: 'Microsoft Azure Data Fundamentals (DP-900)', provider: 'Microsoft Learn', cost: 'Free learning path · paid exam', type: 'exam', why: 'Relational and non-relational data and analytics basics.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-data-fundamentals/', match: /dp-?900|azure data fundamentals/i },
-    { id: 'google-data', track: 'data', name: 'Google Data Analytics Certificate', provider: 'Coursera', cost: 'Paid · financial aid available', type: 'aid', why: 'SQL, spreadsheets, Tableau and R through guided case studies.', url: 'https://www.coursera.org/professional-certificates/google-data-analytics', match: /google.*data analytics/i },
-    { id: 'kaggle', track: 'data', name: 'Kaggle Learn certificates', provider: 'Kaggle', cost: 'Free', type: 'free', why: 'Short hands-on courses in Python, pandas, SQL and machine learning.', url: 'https://www.kaggle.com/learn', match: /kaggle/i },
-    { id: 'ccst-net', track: 'it', name: 'Cisco CCST Networking (100-150)', provider: 'Cisco Networking Academy', cost: 'Free course · paid exam', type: 'exam', why: 'Networking basics that IT support, cloud and security roles all build on.', url: 'https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccst-networking.html', match: /ccst.*network|network.*ccst/i },
-    { id: 'google-it', track: 'it', name: 'Google IT Support Certificate', provider: 'Coursera', cost: 'Paid · financial aid available', type: 'aid', why: 'Troubleshooting, operating systems, networking and security for help-desk roles.', url: 'https://www.coursera.org/professional-certificates/google-it-support', match: /google it support/i },
-    { id: 'google-pm', track: 'pm', name: 'Google Project Management Certificate', provider: 'Coursera', cost: 'Paid · financial aid available', type: 'aid', why: 'Agile, Scrum, risk and stakeholder basics through guided projects.', url: 'https://www.coursera.org/professional-certificates/google-project-management', match: /google.*project management/i }
+    /* ---- Start here: free or nearly free, and useful for any tech role ---- */
+    { id: 'hackerrank', track: 'start', name: 'HackerRank Skills Certification', provider: 'HackerRank', cost: 'Free', type: 'free', hours: '1-2 h', level: 'Beginner', rec: 'industry', skills: ['Python', 'Java', 'SQL', 'JavaScript', 'C++', 'Problem solving'], why: 'Short timed tests in Python, Java, SQL or problem solving. The verified badge has a public link you can put on your resume.', url: 'https://www.hackerrank.com/skills-verification', match: /hackerrank/i },
+    { id: 'github-foundations', track: 'start', name: 'GitHub Foundations', provider: 'GitHub', cost: 'Free for verified students', type: 'voucher', hours: '10-12 h', level: 'Beginner', rec: 'vendor', skills: ['Git', 'CI/CD', 'Agile'], why: 'Proves the Git and GitHub basics every team expects. Verified students can claim a free exam voucher through GitHub Education while supplies last.', url: 'https://education.github.com/experiences/foundations_certificate', match: /github\s*foundations/i },
+    { id: 'freecodecamp', track: 'start', name: 'freeCodeCamp certifications', provider: 'freeCodeCamp', cost: 'Free', type: 'free', hours: '300 h each', level: 'Beginner', rec: 'industry', skills: ['HTML', 'CSS', 'JavaScript', 'Responsive design', 'Python'], why: 'Each certification is earned by building five projects, so you finish with work to link as well as a certificate.', url: 'https://www.freecodecamp.org/learn/', match: /freecodecamp/i },
+    { id: 'cs50x', track: 'start', name: 'CS50x: Introduction to Computer Science', provider: 'Harvard University (CS50)', cost: 'Free certificate from cs50.harvard.edu', type: 'free', hours: '100-150 h', level: 'Beginner', rec: 'academic', skills: ['C', 'Python', 'SQL', 'Algorithms', 'Data Structures', 'Debugging'], why: 'The strongest free name on this list. Harvard issues a free CS50 certificate on its own site; only the edX verified version is paid.', url: 'https://cs50.harvard.edu/x/', match: /cs50/i },
+    { id: 'nptel', track: 'start', name: 'NPTEL course with certification exam', provider: 'NPTEL (IITs and IISc)', cost: 'Free course - paid exam (about Rs 1,000)', type: 'exam', hours: '8-12 weeks', level: 'Intermediate', rec: 'govt', india: true, skills: ['Data Structures', 'Algorithms', 'OOP', 'Statistics', 'Machine Learning'], why: 'Pick a core subject such as DSA, DBMS, operating systems or machine learning. The certificate carries the IIT or IISc name, which campus recruiters recognise.', url: 'https://nptel.ac.in/', match: /nptel|swayam/i },
+    { id: 'infosys-springboard', track: 'start', name: 'Infosys Springboard courses', provider: 'Infosys', cost: 'Free', type: 'free', hours: '4-40 h', level: 'Beginner', rec: 'industry', india: true, skills: ['Java', 'Python', 'SQL', 'Communication', 'Agile'], why: 'Free courses and certificates from an Indian IT services company, covering programming, data, cloud and workplace skills. Well known to Indian campus recruiters.', url: 'https://infyspringboard.onwingspan.com/', match: /infosys|springboard|wingspan/i },
+    { id: 'tcs-ion', track: 'start', name: 'TCS iON Career Edge - Young Professional', provider: 'TCS iON', cost: 'Free', type: 'free', hours: '15-20 h', level: 'Beginner', rec: 'industry', india: true, skills: ['Communication', 'Agile', 'Excel', 'Problem solving'], why: 'A short employability course covering communication, business etiquette, aptitude and IT basics. Very commonly seen on Indian fresher resumes and recognised by TCS recruiters.', url: 'https://learning.tcsionhub.in/courses/career-edge/', match: /tcs\s*ion|career edge/i },
+    { id: 'sidh', track: 'start', name: 'Skill India Digital Hub courses', provider: 'MSDE / NSDC, Government of India', cost: 'Free', type: 'free', hours: 'Varies', level: 'Beginner', rec: 'govt', india: true, skills: ['Communication', 'Excel', 'Customer support'], why: 'Government skilling platform with NSQF-aligned courses and certificates, plus links to apprenticeships and job listings.', url: 'https://www.skillindiadigital.gov.in/', match: /skill india|sidh|nsdc/i },
+    { id: 'career-essentials', track: 'start', name: 'Career Essentials learning paths', provider: 'Microsoft and LinkedIn', cost: 'Free', type: 'free', hours: '6-20 h', level: 'Beginner', rec: 'vendor', skills: ['Communication', 'Agile', 'Troubleshooting'], why: 'Free bundled paths in software development, data analysis, cybersecurity and generative AI, each ending in a shareable LinkedIn certificate.', url: 'https://www.linkedin.com/learning/paths/career-essentials-in-software-development-by-microsoft-and-linkedin', match: /career essentials/i },
+
+    /* ---- Web and software ---- */
+    { id: 'fcc-js', track: 'web', name: 'JavaScript Algorithms and Data Structures', provider: 'freeCodeCamp', cost: 'Free', type: 'free', hours: '300 h', level: 'Beginner', rec: 'industry', skills: ['JavaScript', 'Algorithms', 'Data Structures', 'OOP', 'Debugging'], why: 'The cleanest free way to prove JavaScript and DSA basics together, with projects you can push to GitHub.', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures-v8/', match: /javascript algorithms/i },
+    { id: 'postman-student', track: 'web', name: 'Postman Student Expert', provider: 'Postman', cost: 'Free', type: 'free', hours: '4-6 h', level: 'Beginner', rec: 'vendor', skills: ['REST APIs', 'Unit testing', 'JavaScript', 'Debugging'], why: 'A free badge for API testing and documentation. Fast to finish and it directly backs the "REST APIs" keyword most backend listings ask for.', url: 'https://www.postman.com/student-program/student-expert/', match: /postman/i },
+    { id: 'mongodb-dev', track: 'web', name: 'MongoDB Associate Developer', provider: 'MongoDB University', cost: 'Free courses - exam voucher free for students', type: 'voucher', hours: '20-30 h', level: 'Intermediate', rec: 'vendor', skills: ['MongoDB', 'Node.js', 'REST APIs', 'SQL'], why: 'All MongoDB University courses are free, and students can claim a free certification exam voucher through the GitHub Student Developer Pack.', url: 'https://learn.mongodb.com/pages/mongodb-associate-developer-exam', match: /mongodb/i },
+    { id: 'great-learning', track: 'web', name: 'Great Learning Academy free courses', provider: 'Great Learning', cost: 'Free', type: 'free', hours: '2-10 h', level: 'Beginner', rec: 'industry', india: true, skills: ['React', 'Node.js', 'Python', 'SQL', 'Excel'], why: 'Hundreds of short free courses with a free certificate each. Useful for filling one specific gap quickly rather than as a flagship credential.', url: 'https://www.mygreatlearning.com/academy', match: /great learning|mygreatlearning/i },
+    { id: 'meta-frontend', track: 'web', name: 'Meta Front-End Developer Certificate', provider: 'Coursera', cost: 'Paid - financial aid available', type: 'aid', hours: '100+ h', level: 'Intermediate', rec: 'vendor', skills: ['React', 'JavaScript', 'HTML', 'CSS', 'Responsive design', 'Git'], why: 'A deep React and front-end path. Apply for Coursera financial aid about two weeks before you want to start; approved applications cover the full certificate.', url: 'https://www.coursera.org/professional-certificates/meta-front-end-developer', match: /meta.*front.?end/i },
+
+    /* ---- Cloud and DevOps ---- */
+    { id: 'oci-foundations', track: 'cloud', name: 'Oracle Cloud Infrastructure Foundations Associate', provider: 'Oracle University', cost: 'Free course and exam', type: 'free', hours: '10-14 h', level: 'Beginner', rec: 'vendor', skills: ['Cloud', 'Networking', 'Linux', 'Monitoring'], why: 'A proctored cloud certification from a major vendor that costs nothing. The best value-per-rupee credential on this whole list.', url: 'https://education.oracle.com/oracle-cloud-infrastructure-foundations-associate/pexam_1Z0-1085-25', match: /^(?!.*\bai\b).*(oci|oracle cloud).*foundations/i },
+    { id: 'aws-educate', track: 'cloud', name: 'AWS Educate', provider: 'Amazon Web Services', cost: 'Free', type: 'free', hours: '1-8 h each', level: 'Beginner', rec: 'vendor', skills: ['AWS', 'Cloud', 'Networking', 'Monitoring'], why: 'Free AWS courses and labs with completion badges, no AWS account or card needed. The natural warm-up before paying for Cloud Practitioner.', url: 'https://aws.amazon.com/education/awseducate/', match: /aws educate/i },
+    { id: 'gcp-skillsboost', track: 'cloud', name: 'Google Cloud skill badges', provider: 'Google Cloud Skills Boost', cost: 'Free courses - some labs need credits', type: 'free', hours: '6-20 h', level: 'Beginner', rec: 'vendor', skills: ['Cloud', 'Kubernetes', 'Docker', 'Monitoring', 'Machine Learning'], why: 'Hands-on skill badges you earn by completing real lab challenges. Google runs free credit campaigns for students through the year.', url: 'https://www.cloudskillsboost.google/', match: /skills boost|google cloud badge/i },
+    { id: 'az-900', track: 'cloud', name: 'Microsoft Azure Fundamentals (AZ-900)', provider: 'Microsoft Learn', cost: 'Free learning path - paid exam', type: 'exam', hours: '10-15 h', level: 'Beginner', rec: 'vendor', skills: ['Azure', 'Cloud', 'Networking', 'Monitoring'], why: 'Cloud concepts, core Azure services, pricing and security basics. Watch for Microsoft student and virtual-training-day voucher offers before you pay.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/', match: /az-?900|azure fundamentals/i },
+    { id: 'aws-ccp', track: 'cloud', name: 'AWS Certified Cloud Practitioner (CLF-C02)', provider: 'AWS', cost: 'Free prep - US$100 exam', type: 'exam', hours: '20-30 h', level: 'Beginner', rec: 'vendor', skills: ['AWS', 'Cloud', 'Networking', 'Monitoring'], why: 'The entry AWS certification and the one most Indian cloud listings name. Free prep plan on AWS Skill Builder.', url: 'https://aws.amazon.com/certification/certified-cloud-practitioner/', match: /cloud practitioner|clf-?c0\d/i },
+    { id: 'gcp-cdl', track: 'cloud', name: 'Google Cloud Digital Leader', provider: 'Google Cloud', cost: 'Free learning path - paid exam', type: 'exam', hours: '15-20 h', level: 'Beginner', rec: 'vendor', skills: ['Cloud', 'Machine Learning', 'Monitoring'], why: 'Google Cloud equivalent of AZ-900. Pick this one only if the companies you are targeting run on GCP.', url: 'https://cloud.google.com/learn/certification/cloud-digital-leader', match: /cloud digital leader/i },
+    { id: 'lf-linux', track: 'cloud', name: 'Introduction to Linux (LFS101)', provider: 'The Linux Foundation', cost: 'Free course - paid certificate', type: 'exam', hours: '40-60 h', level: 'Beginner', rec: 'vendor', skills: ['Linux', 'Bash', 'Troubleshooting'], why: 'The course itself is free and is the fastest way to stop being scared of a terminal. Linux shows up in cloud, DevOps, backend and security listings alike.', url: 'https://training.linuxfoundation.org/training/introduction-to-linux/', match: /lfs101|introduction to linux/i },
+
+    /* ---- Cybersecurity ---- */
+    { id: 'cisco-intro-cyber', track: 'security', name: 'Introduction to Cybersecurity', provider: 'Cisco Networking Academy', cost: 'Free course and badge', type: 'free', hours: '6-8 h', level: 'Beginner', rec: 'vendor', skills: ['Network security', 'Threat analysis', 'Firewalls'], why: 'Free Cisco-issued digital badge in an afternoon. The cheapest way to put a recognised security name on a fresher resume.', url: 'https://www.netacad.com/courses/introduction-to-cybersecurity', match: /introduction to cybersecurity/i },
+    { id: 'fortinet-fcf', track: 'security', name: 'Fortinet Certified Fundamentals training (NSE 1-3)', provider: 'Fortinet Training Institute', cost: 'Free self-paced training', type: 'free', hours: '8-12 h', level: 'Beginner', rec: 'vendor', skills: ['Network security', 'Firewalls', 'Threat analysis'], why: 'Free self-paced security training from a firewall vendor, covering threat landscape and next-generation firewall basics. Hands-on labs and instructor-led tiers are paid.', url: 'https://www.fortinet.com/training/cybersecurity-professionals', match: /fortinet|nse ?[123]\b/i },
+    { id: 'qualys', track: 'security', name: 'Qualys free training and certification', provider: 'Qualys', cost: 'Free courses and exams', type: 'free', hours: '4-8 h', level: 'Beginner', rec: 'vendor', skills: ['Vulnerability assessment', 'Threat analysis', 'Network security'], why: 'Free vendor certifications in vulnerability management and scanning, which is exactly the day-one work in most SOC and VAPT roles.', url: 'https://www.qualys.com/training/', match: /qualys/i },
+    { id: 'sc-900', track: 'security', name: 'Microsoft Security, Compliance and Identity Fundamentals (SC-900)', provider: 'Microsoft Learn', cost: 'Free learning path - paid exam', type: 'exam', hours: '10-14 h', level: 'Beginner', rec: 'vendor', skills: ['Network security', 'Threat analysis', 'Active Directory'], why: 'Identity, access and compliance basics used in SOC, IAM and GRC roles.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/', match: /sc-?900|security,? compliance/i },
+    { id: 'ccst-cyber', track: 'security', name: 'Cisco CCST Cybersecurity (100-160)', provider: 'Cisco Networking Academy', cost: 'Free course - US$125 exam', type: 'exam', hours: '30-40 h', level: 'Intermediate', rec: 'vendor', skills: ['Incident response', 'SIEM', 'Network security', 'Threat analysis', 'Firewalls'], why: 'A hands-on junior analyst course with a Cisco exam at the end. Free to study even if you never sit the exam.', url: 'https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccst-cybersecurity.html', match: /ccst.*cyber|cyber.*ccst/i },
+    { id: 'isc2-cc', track: 'security', name: 'ISC2 Certified in Cybersecurity (CC)', provider: 'ISC2', cost: 'Paid exam - free study resources', type: 'exam', hours: '30-40 h', level: 'Beginner', rec: 'vendor', skills: ['Incident response', 'Network security', 'Threat analysis'], why: 'An entry-level credential from the body behind CISSP. ISC2 has run free training and exam campaigns in the past, so check its site for a current offer before paying.', url: 'https://www.isc2.org/certifications/cc', match: /isc2|certified in cybersecurity/i },
+    { id: 'google-cyber', track: 'security', name: 'Google Cybersecurity Certificate', provider: 'Coursera', cost: 'Paid - financial aid available', type: 'aid', hours: '150+ h', level: 'Beginner', rec: 'vendor', skills: ['SIEM', 'Linux', 'SQL', 'Python', 'Incident response', 'Threat analysis'], why: 'SIEM tools, Linux, SQL and Python for entry security roles. Coursera financial aid covers it in full if approved.', url: 'https://www.coursera.org/professional-certificates/google-cybersecurity', match: /google.*cyber/i },
+
+    /* ---- Data and AI ---- */
+    { id: 'kaggle', track: 'data', name: 'Kaggle Learn certificates', provider: 'Kaggle', cost: 'Free', type: 'free', hours: '3-5 h each', level: 'Beginner', rec: 'industry', skills: ['Python', 'Pandas', 'SQL', 'Machine Learning', 'Data visualization', 'EDA'], why: 'Short hands-on courses in Python, pandas, SQL, machine learning and feature engineering. Finish one in a weekend and enter a competition with the same account.', url: 'https://www.kaggle.com/learn', match: /kaggle/i },
+    { id: 'oci-ai', track: 'data', name: 'OCI AI Foundations Associate', provider: 'Oracle University', cost: 'Free course and exam', type: 'free', hours: '8-12 h', level: 'Beginner', rec: 'vendor', skills: ['Machine Learning', 'Deep Learning', 'NLP'], why: 'Machine learning and generative AI basics with a free proctored exam from a major vendor.', url: 'https://education.oracle.com/oracle-cloud-infrastructure-ai-foundations-associate/pexam_1Z0-1122-25', match: /(oci|oracle).*\bai\b.*foundations/i },
+    { id: 'ibm-skillsbuild', track: 'data', name: 'IBM SkillsBuild credentials', provider: 'IBM', cost: 'Free', type: 'free', hours: '6-30 h', level: 'Beginner', rec: 'vendor', skills: ['Machine Learning', 'Python', 'Data visualization', 'Statistics'], why: 'Free IBM-issued digital credentials in AI, data and professional skills, built for students and job seekers.', url: 'https://skillsbuild.org/students', match: /skillsbuild|ibm/i },
+    { id: 'elements-of-ai', track: 'data', name: 'Elements of AI', provider: 'University of Helsinki and MinnaLearn', cost: 'Free certificate', type: 'free', hours: '30-50 h', level: 'Beginner', rec: 'academic', skills: ['Machine Learning', 'Statistics', 'Model evaluation'], why: 'A university-issued free certificate in AI fundamentals, with no maths prerequisites. Good for non-CS branches entering AI roles.', url: 'https://www.elementsofai.com/', match: /elements of ai/i },
+    { id: 'huggingface', track: 'data', name: 'Hugging Face courses', provider: 'Hugging Face', cost: 'Free', type: 'free', hours: '20-40 h', level: 'Intermediate', rec: 'industry', skills: ['NLP', 'Deep Learning', 'PyTorch', 'Machine Learning', 'Python'], why: 'Free NLP, LLM and agents courses with a certificate on completion, and you ship models to a public profile recruiters can open.', url: 'https://huggingface.co/learn', match: /hugging ?face/i },
+    { id: 'ai-901', track: 'data', name: 'Microsoft Azure AI Fundamentals (AI-901)', provider: 'Microsoft Learn', cost: 'Free learning path - paid exam', type: 'exam', hours: '10-14 h', level: 'Beginner', rec: 'vendor', skills: ['Machine Learning', 'Deep Learning', 'NLP', 'Azure'], why: 'Replaces AI-900, which retired on 30 June 2026. Covers machine learning, vision, language and generative AI on Azure.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-fundamentals/', match: /ai-?90[01]|azure ai fundamentals/i },
+    { id: 'dp-900', track: 'data', name: 'Microsoft Azure Data Fundamentals (DP-900)', provider: 'Microsoft Learn', cost: 'Free learning path - paid exam', type: 'exam', hours: '10-14 h', level: 'Beginner', rec: 'vendor', skills: ['SQL', 'Data cleaning', 'Reporting', 'Azure'], why: 'Relational and non-relational data, analytics workloads and the vocabulary data teams interview on.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-data-fundamentals/', match: /dp-?900|azure data fundamentals/i },
+    { id: 'google-data', track: 'data', name: 'Google Data Analytics Certificate', provider: 'Coursera', cost: 'Paid - financial aid available', type: 'aid', hours: '150+ h', level: 'Beginner', rec: 'vendor', skills: ['SQL', 'Excel', 'Tableau', 'R', 'Data cleaning', 'Data visualization', 'Dashboards'], why: 'SQL, spreadsheets, Tableau and R through guided case studies, ending in a portfolio project.', url: 'https://www.coursera.org/professional-certificates/google-data-analytics', match: /google.*data analytics/i },
+
+    /* ---- Networking and IT support ---- */
+    { id: 'cisco-net-basics', track: 'it', name: 'Networking Basics', provider: 'Cisco Networking Academy', cost: 'Free course and badge', type: 'free', hours: '6-8 h', level: 'Beginner', rec: 'vendor', skills: ['Networking', 'TCP/IP', 'DNS', 'DHCP', 'Troubleshooting'], why: 'Free Cisco badge covering IP addressing, protocols and basic troubleshooting. The groundwork for CCST and for every cloud role too.', url: 'https://www.netacad.com/courses/networking-basics', match: /networking basics/i },
+    { id: 'ccst-net', track: 'it', name: 'Cisco CCST Networking (100-150)', provider: 'Cisco Networking Academy', cost: 'Free course - paid exam', type: 'exam', hours: '30-40 h', level: 'Intermediate', rec: 'vendor', skills: ['Networking', 'TCP/IP', 'DNS', 'DHCP', 'Troubleshooting', 'Firewalls'], why: 'Networking fundamentals that IT support, cloud and security roles all build on, with a Cisco exam at the end.', url: 'https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccst-networking.html', match: /ccst.*network|network.*ccst/i },
+    { id: 'ms-900', track: 'it', name: 'Microsoft 365 Fundamentals (MS-900)', provider: 'Microsoft Learn', cost: 'Free learning path - paid exam', type: 'exam', hours: '8-12 h', level: 'Beginner', rec: 'vendor', skills: ['Office 365', 'Active Directory', 'Windows', 'Ticketing'], why: 'The Microsoft 365 side of help-desk work, which is what most Indian IT support and managed-services roles actually run on.', url: 'https://learn.microsoft.com/en-us/credentials/certifications/microsoft-365-fundamentals/', match: /ms-?900|microsoft 365 fundamentals/i },
+    { id: 'google-it', track: 'it', name: 'Google IT Support Certificate', provider: 'Coursera', cost: 'Paid - financial aid available', type: 'aid', hours: '120+ h', level: 'Beginner', rec: 'vendor', skills: ['Troubleshooting', 'Windows', 'Linux', 'Networking', 'Customer support', 'DNS'], why: 'Troubleshooting, operating systems, networking and security for help-desk roles. Financial aid covers it in full if approved.', url: 'https://www.coursera.org/professional-certificates/google-it-support', match: /google it support/i },
+
+    /* ---- Product and project management ---- */
+    { id: 'hubspot', track: 'pm', name: 'HubSpot Academy certifications', provider: 'HubSpot', cost: 'Free courses and exams', type: 'free', hours: '3-6 h each', level: 'Beginner', rec: 'industry', skills: ['Communication', 'Stakeholder management', 'Reporting'], why: 'Free, genuinely recognised certifications in inbound marketing, sales and CRM. The fastest free credential for business and growth roles.', url: 'https://academy.hubspot.com/courses', match: /hubspot/i },
+    { id: 'google-analytics', track: 'pm', name: 'Google Analytics Certification', provider: 'Google Skillshop', cost: 'Free course and exam', type: 'free', hours: '4-6 h', level: 'Beginner', rec: 'vendor', skills: ['Reporting', 'Dashboards', 'Data visualization', 'Requirements gathering'], why: 'Free Google-issued certification in GA4. Product, growth and analyst roles all list Google Analytics by name.', url: 'https://skillshop.withgoogle.com/', match: /google analytics|skillshop/i },
+    { id: 'atlassian-jira', track: 'pm', name: 'Atlassian University free courses', provider: 'Atlassian', cost: 'Free courses - paid certification', type: 'exam', hours: '2-6 h', level: 'Beginner', rec: 'vendor', skills: ['Jira', 'Agile', 'Scrum', 'Prioritization'], why: 'Free Jira and Confluence training with completion badges. Jira is the single most-named tool in PM job descriptions.', url: 'https://university.atlassian.com/student/catalog', match: /atlassian|jira/i },
+    { id: 'google-pm', track: 'pm', name: 'Google Project Management Certificate', provider: 'Coursera', cost: 'Paid - financial aid available', type: 'aid', hours: '140+ h', level: 'Beginner', rec: 'vendor', skills: ['Agile', 'Scrum', 'Stakeholder management', 'Roadmap', 'Prioritization', 'Requirements gathering'], why: 'Agile, Scrum, risk and stakeholder basics through guided projects, ending in artefacts you can show.', url: 'https://www.coursera.org/professional-certificates/google-project-management', match: /google.*project management/i },
+
+    /* ---- Business, startup and entrepreneurship ---- */
+    { id: 'startup-india', track: 'biz', name: 'Startup India Learning Programme', provider: 'DPIIT, Government of India', cost: 'Free certificate', type: 'free', hours: '4-6 weeks', level: 'Beginner', rec: 'govt', india: true, skills: ['Communication', 'Stakeholder management', 'Requirements gathering'], why: 'A free government-issued entrepreneurship certificate covering idea validation, business models and funding. Carries weight when you apply to incubators or state startup schemes.', url: 'https://www.startupindia.gov.in/content/sih/en/eLearningPrograms.html', match: /startup india/i },
+    { id: 'wadhwani', track: 'biz', name: 'Wadhwani Foundation entrepreneurship and employability', provider: 'Wadhwani Foundation', cost: 'Free', type: 'free', hours: '10-40 h', level: 'Beginner', rec: 'industry', india: true, skills: ['Communication', 'Prioritization', 'Stakeholder management'], why: 'Free entrepreneurship, job-readiness and soft-skill programmes used by many Indian colleges, with certificates on completion.', url: 'https://wadhwanifoundation.org/', match: /wadhwani/i },
+    { id: 'google-ads', track: 'biz', name: 'Google Ads certifications', provider: 'Google Skillshop', cost: 'Free course and exam', type: 'free', hours: '3-5 h each', level: 'Beginner', rec: 'vendor', skills: ['Reporting', 'Communication'], why: 'Free Google-issued certifications in search, display and measurement. Directly relevant if you are heading into growth, marketing or an early-stage startup role.', url: 'https://skillshop.withgoogle.com/', match: /google ads/i },
+
+    /* ---- Job simulations: proof, not just a certificate ---- */
+    { id: 'forage', track: 'sim', name: 'Forage job simulations', provider: 'Forage', cost: 'Free', type: 'free', hours: '4-6 h each', level: 'Beginner', rec: 'industry', skills: ['Communication', 'Problem solving', 'Reporting', 'Requirements gathering'], why: 'Free, open-access simulations built by real employers such as JPMorgan, Deloitte, BCG and Accenture. You do the actual task, compare against model answers, and get a completion certificate naming the company.', url: 'https://www.theforage.com/', match: /forage|job simulation|virtual experience/i }
   ];
   const CERT_BY_ID = Object.fromEntries(CERTS.map(c => [c.id, c]));
   const TRACKS = [
     { id: 'start', name: 'Start here', note: 'Free or nearly free, and useful for any tech role.' },
-    { id: 'cloud', name: 'Cloud', note: 'For cloud, DevOps and backend roles.' },
-    { id: 'security', name: 'Cybersecurity', note: 'For SOC, security analyst and GRC roles.' },
+    { id: 'web', name: 'Web and software', note: 'For software, full-stack and backend roles.' },
+    { id: 'cloud', name: 'Cloud and DevOps', note: 'For cloud, DevOps, SRE and backend roles.' },
+    { id: 'security', name: 'Cybersecurity', note: 'For SOC, security analyst, VAPT and GRC roles.' },
     { id: 'data', name: 'Data and AI', note: 'For data analyst, data science and ML roles.' },
     { id: 'it', name: 'Networking and IT support', note: 'For help-desk, network and system admin roles.' },
-    { id: 'pm', name: 'Product and project management', note: 'For associate product manager and project coordinator roles.' }
+    { id: 'pm', name: 'Product and project management', note: 'For associate product manager and project coordinator roles.' },
+    { id: 'biz', name: 'Business and entrepreneurship', note: 'For startup, growth and founder-track roles.' },
+    { id: 'sim', name: 'Job simulations', note: 'Employer-built tasks that prove you can do the work, not just pass a quiz.' }
+  ];
+  const COST_TYPES = {
+    free: { label: 'Free end to end', hint: 'Course and certificate both cost nothing.' },
+    voucher: { label: 'Free for students', hint: 'Free through a student pack or verified-student voucher.' },
+    exam: { label: 'Free to learn, paid exam', hint: 'Study material is free; only the exam costs money.' },
+    aid: { label: 'Paid, financial aid', hint: 'Paid course, but Coursera financial aid covers approved applications in full.' }
+  };
+  const REC_LABELS = { vendor: 'Vendor-recognised', govt: 'Government-recognised', academic: 'University-issued', industry: 'Industry-recognised' };
+  const PERKS = [
+    { name: 'GitHub Student Developer Pack', why: 'Unlocks free exam vouchers and paid developer tools, including the GitHub Foundations and MongoDB vouchers above. Verify with your college email first.', url: 'https://education.github.com/pack' },
+    { name: 'Microsoft Azure for Students', why: 'Free Azure credit with no card, plus free access to the learning paths behind AZ-900, AI-901 and DP-900.', url: 'https://azure.microsoft.com/en-us/free/students/' },
+    { name: 'AWS Educate', why: 'Free AWS labs and badges without an AWS account, and a path into the Cloud Practitioner syllabus.', url: 'https://aws.amazon.com/education/awseducate/' },
+    { name: 'Google Cloud Skills Boost credits', why: 'Google regularly runs free monthly credit campaigns for students, which cover the hands-on skill-badge labs.', url: 'https://www.cloudskillsboost.google/' },
+    { name: 'Coursera financial aid', why: 'Covers the full fee on every Google, Meta and IBM certificate if approved. Apply about 15 days before you plan to start.', url: 'https://www.coursera.support/s/article/209819033-Apply-for-Financial-Aid' },
+    { name: 'JetBrains student licence', why: 'Free IntelliJ IDEA Ultimate, PyCharm Professional and DataGrip for the length of your degree.', url: 'https://www.jetbrains.com/community/education/#students' }
   ];
 
   const ROLES = [
-    { id: 'swe', label: 'Software Developer', keywords: ['Data Structures', 'Algorithms', 'OOP', 'Java', 'Python', 'C++', 'Git', 'SQL', 'REST APIs', 'Unit testing', 'Linux', 'Debugging', 'Agile'], langs: ['Java', 'Python', 'C++', 'C', 'JavaScript', 'SQL'], tools: ['Git', 'GitHub', 'Spring Boot', 'Django', 'Flask', 'MySQL', 'Linux', 'Docker', 'Postman', 'VS Code'], certs: ['hackerrank', 'github-foundations', 'nptel', 'oci-foundations', 'az-900'] },
-    { id: 'web', label: 'Full Stack Developer', keywords: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'Express', 'REST APIs', 'MongoDB', 'SQL', 'Git', 'Responsive design', 'Docker'], langs: ['JavaScript', 'TypeScript', 'HTML', 'CSS', 'Python', 'SQL'], tools: ['React', 'Node.js', 'Express', 'Next.js', 'MongoDB', 'MySQL', 'Tailwind CSS', 'Git', 'Vercel', 'Postman'], certs: ['freecodecamp', 'github-foundations', 'hackerrank', 'oci-foundations', 'aws-ccp'] },
-    { id: 'data', label: 'Data Analyst', keywords: ['SQL', 'Excel', 'Python', 'Pandas', 'Power BI', 'Tableau', 'Data cleaning', 'Data visualization', 'Statistics', 'Dashboards', 'Reporting', 'EDA'], langs: ['Python', 'SQL', 'R'], tools: ['Excel', 'Power BI', 'Tableau', 'Pandas', 'NumPy', 'Matplotlib', 'MySQL', 'Jupyter', 'Google Sheets'], certs: ['google-data', 'kaggle', 'dp-900', 'hackerrank', 'nptel'] },
-    { id: 'ml', label: 'Data Scientist / ML Engineer', keywords: ['Python', 'NumPy', 'Pandas', 'scikit-learn', 'Machine Learning', 'Deep Learning', 'TensorFlow', 'PyTorch', 'SQL', 'Statistics', 'NLP', 'Model evaluation', 'Git'], langs: ['Python', 'SQL', 'R'], tools: ['NumPy', 'Pandas', 'scikit-learn', 'TensorFlow', 'PyTorch', 'Jupyter', 'Matplotlib', 'Hugging Face', 'Git'], certs: ['kaggle', 'oci-ai', 'ai-901', 'google-data', 'nptel'] },
-    { id: 'cyber', label: 'Cybersecurity Analyst', keywords: ['Network security', 'SIEM', 'Incident response', 'Vulnerability assessment', 'Penetration testing', 'Wireshark', 'Nmap', 'Linux', 'Firewalls', 'OWASP Top 10', 'Threat analysis', 'Python', 'Splunk'], langs: ['Python', 'Bash', 'C', 'C++', 'PowerShell', 'SQL'], tools: ['Wireshark', 'Nmap', 'Burp Suite', 'Metasploit', 'Kali Linux', 'Splunk', 'Nessus', 'Linux', 'Cisco Packet Tracer', 'Git'], certs: ['ccst-cyber', 'sc-900', 'google-cyber', 'ccst-net', 'oci-foundations'] },
-    { id: 'cloud', label: 'Cloud / DevOps Engineer', keywords: ['AWS', 'Azure', 'Linux', 'Docker', 'Kubernetes', 'CI/CD', 'Git', 'Terraform', 'Bash', 'Networking', 'Monitoring', 'Python', 'Jenkins'], langs: ['Python', 'Bash', 'Go', 'YAML'], tools: ['AWS', 'Azure', 'Linux', 'Docker', 'Kubernetes', 'Terraform', 'Jenkins', 'GitHub Actions', 'Git', 'Nginx'], certs: ['aws-ccp', 'az-900', 'oci-foundations', 'github-foundations', 'ccst-net'] },
-    { id: 'it', label: 'IT Support Engineer', keywords: ['Troubleshooting', 'Windows', 'Linux', 'Networking', 'TCP/IP', 'Active Directory', 'Ticketing', 'Hardware', 'Customer support', 'DNS', 'DHCP', 'Office 365'], langs: ['Bash', 'PowerShell', 'Python'], tools: ['Windows', 'Linux', 'Active Directory', 'Office 365', 'Cisco Packet Tracer', 'Wireshark', 'ServiceNow', 'VirtualBox'], certs: ['google-it', 'ccst-net', 'az-900', 'sc-900', 'hackerrank'] },
-    { id: 'pm', label: 'Product / Project Manager', keywords: ['Agile', 'Scrum', 'Jira', 'Stakeholder management', 'Roadmap', 'User research', 'Requirements gathering', 'Excel', 'SQL', 'Communication', 'Wireframing', 'Prioritization'], langs: ['SQL', 'Python'], tools: ['Jira', 'Excel', 'Figma', 'Notion', 'Trello', 'Google Analytics', 'Miro', 'Power BI', 'Confluence'], certs: ['google-pm', 'nptel', 'google-data', 'hackerrank'] },
-    { id: 'other', label: 'Other role', keywords: [], langs: ['Python', 'SQL', 'Java', 'C++'], tools: ['Excel', 'Git', 'Google Sheets', 'Canva'], certs: ['hackerrank', 'nptel', 'github-foundations', 'oci-foundations'] }
+    { id: 'swe', label: 'Software Developer', keywords: ['Data Structures', 'Algorithms', 'OOP', 'Java', 'Python', 'C++', 'Git', 'SQL', 'REST APIs', 'Unit testing', 'Linux', 'Debugging', 'Agile'], langs: ['Java', 'Python', 'C++', 'C', 'JavaScript', 'SQL'], tools: ['Git', 'GitHub', 'Spring Boot', 'Django', 'Flask', 'MySQL', 'Linux', 'Docker', 'Postman', 'VS Code'], certs: ['hackerrank', 'github-foundations', 'cs50x', 'postman-student', 'nptel', 'oci-foundations', 'lf-linux', 'infosys-springboard', 'forage'] },
+    { id: 'web', label: 'Full Stack Developer', keywords: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'Express', 'REST APIs', 'MongoDB', 'SQL', 'Git', 'Responsive design', 'Docker'], langs: ['JavaScript', 'TypeScript', 'HTML', 'CSS', 'Python', 'SQL'], tools: ['React', 'Node.js', 'Express', 'Next.js', 'MongoDB', 'MySQL', 'Tailwind CSS', 'Git', 'Vercel', 'Postman'], certs: ['freecodecamp', 'fcc-js', 'postman-student', 'github-foundations', 'mongodb-dev', 'oci-foundations', 'meta-frontend', 'aws-ccp', 'forage'] },
+    { id: 'data', label: 'Data Analyst', keywords: ['SQL', 'Excel', 'Python', 'Pandas', 'Power BI', 'Tableau', 'Data cleaning', 'Data visualization', 'Statistics', 'Dashboards', 'Reporting', 'EDA'], langs: ['Python', 'SQL', 'R'], tools: ['Excel', 'Power BI', 'Tableau', 'Pandas', 'NumPy', 'Matplotlib', 'MySQL', 'Jupyter', 'Google Sheets'], certs: ['kaggle', 'hackerrank', 'dp-900', 'google-analytics', 'ibm-skillsbuild', 'google-data', 'nptel', 'forage'] },
+    { id: 'ml', label: 'Data Scientist / ML Engineer', keywords: ['Python', 'NumPy', 'Pandas', 'scikit-learn', 'Machine Learning', 'Deep Learning', 'TensorFlow', 'PyTorch', 'SQL', 'Statistics', 'NLP', 'Model evaluation', 'Git'], langs: ['Python', 'SQL', 'R'], tools: ['NumPy', 'Pandas', 'scikit-learn', 'TensorFlow', 'PyTorch', 'Jupyter', 'Matplotlib', 'Hugging Face', 'Git'], certs: ['kaggle', 'oci-ai', 'huggingface', 'elements-of-ai', 'ai-901', 'ibm-skillsbuild', 'nptel', 'google-data'] },
+    { id: 'cyber', label: 'Cybersecurity Analyst', keywords: ['Network security', 'SIEM', 'Incident response', 'Vulnerability assessment', 'Penetration testing', 'Wireshark', 'Nmap', 'Linux', 'Firewalls', 'OWASP Top 10', 'Threat analysis', 'Python', 'Splunk'], langs: ['Python', 'Bash', 'C', 'C++', 'PowerShell', 'SQL'], tools: ['Wireshark', 'Nmap', 'Burp Suite', 'Metasploit', 'Kali Linux', 'Splunk', 'Nessus', 'Linux', 'Cisco Packet Tracer', 'Git'], certs: ['cisco-intro-cyber', 'fortinet-fcf', 'qualys', 'ccst-cyber', 'sc-900', 'lf-linux', 'google-cyber', 'isc2-cc'] },
+    { id: 'cloud', label: 'Cloud / DevOps Engineer', keywords: ['AWS', 'Azure', 'Linux', 'Docker', 'Kubernetes', 'CI/CD', 'Git', 'Terraform', 'Bash', 'Networking', 'Monitoring', 'Python', 'Jenkins'], langs: ['Python', 'Bash', 'Go', 'YAML'], tools: ['AWS', 'Azure', 'Linux', 'Docker', 'Kubernetes', 'Terraform', 'Jenkins', 'GitHub Actions', 'Git', 'Nginx'], certs: ['oci-foundations', 'aws-educate', 'github-foundations', 'lf-linux', 'gcp-skillsboost', 'az-900', 'aws-ccp', 'cisco-net-basics'] },
+    { id: 'it', label: 'IT Support Engineer', keywords: ['Troubleshooting', 'Windows', 'Linux', 'Networking', 'TCP/IP', 'Active Directory', 'Ticketing', 'Hardware', 'Customer support', 'DNS', 'DHCP', 'Office 365'], langs: ['Bash', 'PowerShell', 'Python'], tools: ['Windows', 'Linux', 'Active Directory', 'Office 365', 'Cisco Packet Tracer', 'Wireshark', 'ServiceNow', 'VirtualBox'], certs: ['cisco-net-basics', 'lf-linux', 'ms-900', 'ccst-net', 'sc-900', 'az-900', 'google-it', 'sidh'] },
+    { id: 'pm', label: 'Product / Project Manager', keywords: ['Agile', 'Scrum', 'Jira', 'Stakeholder management', 'Roadmap', 'User research', 'Requirements gathering', 'Excel', 'SQL', 'Communication', 'Wireframing', 'Prioritization'], langs: ['SQL', 'Python'], tools: ['Jira', 'Excel', 'Figma', 'Notion', 'Trello', 'Google Analytics', 'Miro', 'Power BI', 'Confluence'], certs: ['atlassian-jira', 'hubspot', 'google-analytics', 'forage', 'tcs-ion', 'google-pm', 'nptel', 'startup-india'] },
+    { id: 'biz', label: 'Startup / Business role', keywords: ['Communication', 'Stakeholder management', 'Excel', 'Reporting', 'Requirements gathering', 'Prioritization', 'User research', 'Market research', 'Presentation'], langs: ['SQL'], tools: ['Excel', 'Google Sheets', 'Notion', 'Canva', 'Google Analytics', 'HubSpot', 'Figma', 'Trello'], certs: ['startup-india', 'hubspot', 'google-analytics', 'forage', 'wadhwani', 'tcs-ion', 'google-ads', 'sidh'] },
+    { id: 'other', label: 'Other role', keywords: [], langs: ['Python', 'SQL', 'Java', 'C++'], tools: ['Excel', 'Git', 'Google Sheets', 'Canva'], certs: ['hackerrank', 'tcs-ion', 'infosys-springboard', 'forage', 'nptel', 'github-foundations', 'sidh', 'oci-foundations'] }
   ];
   const ROLE_BY_ID = Object.fromEntries(ROLES.map(r => [r.id, r]));
 
@@ -712,11 +841,12 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     return base;
   }
 
-  let state = { view: 'intro', step: 1, data: emptyData(), fixesDone: {}, example: false, tab: 'resume' };
+  let state = { view: 'intro', step: 1, data: emptyData(), fixesDone: {}, certStatus: {}, example: false, tab: 'resume' };
+  let certUI = { q: '', cost: 'all', india: false };
   let editing = false, highlight = true;
 
   function save() {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify({ v: 1, view: state.view, step: state.step, data: state.data, fixesDone: state.fixesDone, example: state.example })); } catch (e) { /* storage unavailable */ }
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ v: 1, view: state.view, step: state.step, data: state.data, fixesDone: state.fixesDone, certStatus: state.certStatus, example: state.example })); } catch (e) { /* storage unavailable */ }
   }
   let saveTimer = 0;
   function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 300); }
@@ -787,9 +917,58 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
   function heldCert(d, cert) {
     return d.certifications.some(c => { const t = S(c.name) + ' ' + S(c.issuer); return S(c.name) && cert.match.test(t); });
   }
-  function certPicks(d) {
+  function missingKeywords(r) {
+    return keywordStatus(r).filter(x => !x.hit).map(x => x.k);
+  }
+  function gapHits(cert, missing) {
+    const ms = missing.map(m => m.toLowerCase());
+    return (cert.skills || []).filter(s => ms.indexOf(s.toLowerCase()) !== -1);
+  }
+  function hoursNum(c) {
+    const t = String(c.hours || '');
+    const m = t.match(/\d+/);
+    let n = m ? Number(m[0]) : 50;
+    if (/week/i.test(t)) n *= 12;
+    return n;
+  }
+  function certScore(cert, idx, missing) {
+    let s = 100 - idx * 6;
+    s += gapHits(cert, missing).length * 9;
+    if (cert.type === 'free') s += 12;
+    else if (cert.type === 'voucher') s += 8;
+    else if (cert.type === 'exam') s += 2;
+    if (certStatusOf(cert.id) === 'done') s -= 200;
+    else if (certStatusOf(cert.id) === 'doing') s += 15;
+    return s;
+  }
+  function certPicks(d, r) {
     const role = ROLE_BY_ID[d.roleId] || ROLE_BY_ID.other;
-    return role.certs.filter(id => CERT_BY_ID[id] && !heldCert(d, CERT_BY_ID[id])).slice(0, 4);
+    const missing = r ? missingKeywords(r) : [];
+    return role.certs
+      .filter(id => CERT_BY_ID[id] && !heldCert(d, CERT_BY_ID[id]) && certStatusOf(id) !== 'done')
+      .map((id, i) => ({ id: id, score: certScore(CERT_BY_ID[id], i, missing) }))
+      .sort((a, b) => b.score - a.score)
+      .map(x => x.id);
+  }
+  function certPlan(d, r) {
+    const picks = certPicks(d, r).map(id => CERT_BY_ID[id]);
+    if (!picks.length) return [];
+    const used = {};
+    const take = (pool) => {
+      for (let i = 0; i < pool.length; i++) { if (!used[pool[i].id]) { used[pool[i].id] = 1; return pool[i]; } }
+      return null;
+    };
+    const quick = picks.filter(c => c.type === 'free' || c.type === 'voucher');
+    const fast = quick.slice(0, 4).slice().sort((x, y) => hoursNum(x) - hoursNum(y));
+    const flagship = picks.filter(c => c.type === 'exam' || c.type === 'aid');
+    const out = [];
+    const a = take(fast) || take(quick) || take(picks);
+    const b = take(quick) || take(picks);
+    const c3 = take(flagship) || take(picks);
+    if (a) out.push({ when: 'This week', cert: a, note: 'Quick win. Finish it, mark it done below and it lands on your resume.' });
+    if (b) out.push({ when: 'Next 4 to 6 weeks', cert: b, note: 'Your core credential for this role. Build one project alongside it.' });
+    if (c3) out.push({ when: 'By month 3', cert: c3, note: 'The one that costs money or serious time. Line up a voucher or financial aid first.' });
+    return out;
   }
 
   function toResume(d) {
@@ -814,7 +993,7 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
 
   function computeFixes(d, r) {
     const F = [];
-    const techRole = d.roleId && d.roleId !== 'pm' && d.roleId !== 'other';
+    const techRole = d.roleId && d.roleId !== 'pm' && d.roleId !== 'biz' && d.roleId !== 'other';
     const bullets = r.projects.flatMap(p => p.bullets).concat(r.experience.flatMap(x => x.bullets));
     const cut = (s) => s.length > 70 ? s.slice(0, 67) + '…' : s;
     if (!r.contact.email) F.push(['Add your email', 'Recruiters need a way to reach you. A simple address like firstname.lastname@gmail.com works best.']);
@@ -830,8 +1009,8 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     if (r.projects.length < 2) F.push(['Add at least two projects', 'As a student, projects carry the weight that work experience would. College projects and personal builds both count.']);
     const noLink = r.projects.filter(p => p.name && !p.link);
     if (techRole && noLink.length) F.push(['Link ' + plural(noLink.length, 'project'), 'Add a GitHub or live demo link to ' + listJoin(noLink.map(p => p.name)) + ' so recruiters can check your work.']);
-    const picks = certPicks(d);
-    if (!r.certifications.length && picks.length) F.push(['Add a free certification', 'Start with ' + CERT_BY_ID[picks[0]].name + '. See the Certifications tab.']);
+    const picks = certPicks(d, r);
+    if (!r.certifications.length && picks.length) F.push(['Add a free certification', 'Start with ' + CERT_BY_ID[picks[0]].name + ' (' + CERT_BY_ID[picks[0]].cost.toLowerCase() + '). See the Certifications tab.']);
     const missing = keywordStatus(r).filter(x => !x.hit).map(x => x.k);
     if (r.keywords.length && missing.length >= Math.ceil(r.keywords.length / 2)) F.push(['Cover more role keywords', 'Missing: ' + missing.slice(0, 5).join(', ') + '. Add the ones you can honestly back up.']);
     if (r.summary.split(/\s+/).length > 70) F.push(['Shorten your summary', 'Keep it to two or three sentences, under 60 words.']);
@@ -1411,7 +1590,7 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     $('atsText').textContent = plainText(r);
     renderKeywords(r);
     renderFixes(d, r);
-    renderCerts(d);
+    renderCerts(d, r);
     selectTab(state.tab, false);
   }
 
@@ -1581,23 +1760,147 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     $('fixCount').textContent = fixes.filter(f => state.fixesDone[f.title]).length + ' of ' + fixes.length + ' done';
   }
   function certMeta(c) {
-    return h('div', { class: 'meta' }, h('span', { text: c.provider }), h('span', { class: 'cost ' + c.type, text: c.cost }), h('a', { href: c.url, target: '_blank', rel: 'noopener', text: 'Official page' }));
+    return h('div', { class: 'meta' },
+      h('span', { text: c.provider }),
+      h('span', { class: 'cost ' + c.type, text: c.cost }),
+      h('span', { class: 'rec ' + c.rec, text: REC_LABELS[c.rec] || '' }),
+      h('span', { text: c.hours + ' · ' + c.level })
+    );
   }
-  function renderCerts(d) {
-    const picks = certPicks(d);
-    const role = ROLE_BY_ID[d.roleId];
-    $('picksBlock').hidden = !picks.length;
-    $('picksIntro').textContent = 'Picked for ' + (role && role.id !== 'other' ? 'a ' + role.label + ' role' : 'students starting out') + ', skipping the ones you already hold. Best first.';
-    const ol = $('picks');
-    ol.textContent = '';
-    picks.forEach(id => { const c = CERT_BY_ID[id]; ol.append(h('li', { class: 'pick' }, h('span', { class: 'cname', text: c.name }), certMeta(c), h('p', { class: 'why', text: c.why }))); });
+  function certStatusOf(id) { return (state.certStatus && state.certStatus[id]) || 'none'; }
+  function addCertToResume(c) {
+    const list = state.data.certifications;
+    const year = String(new Date().getFullYear());
+    const slot = list.find(x => !S(x.name));
+    if (slot) { slot.name = c.name; slot.issuer = c.provider; slot.year = year; }
+    else if (list.length < 8) list.push({ name: c.name, issuer: c.provider, year: year });
+    else { toast('Your resume already lists 8 certifications.'); return; }
+    state.certStatus[c.id] = 'done';
+    save();
+    renderResult();
+    toast('Added to your resume. Check the year in step 11.');
+  }
+  function certCard(d, c, missing) {
+    const held = heldCert(d, c);
+    const st = certStatusOf(c.id);
+    const hits = gapHits(c, missing);
+    const card = h('div', { class: 'cert-card' + ((held || st === 'done') ? ' is-done' : '') },
+      h('span', { class: 'cname', text: c.name + (held ? ' (already on your resume)' : '') }),
+      certMeta(c),
+      h('p', { class: 'why', text: c.why }));
+    if (c.skills && c.skills.length) {
+      card.append(h('div', { class: 'skillchips' }, c.skills.map(s =>
+        h('span', { class: 'skillchip' + (hits.some(x => x.toLowerCase() === s.toLowerCase()) ? ' gap' : ''), text: s }))));
+    }
+    const sel = h('select', { 'aria-label': 'Progress on ' + c.name },
+      [['none', 'Not started'], ['planned', 'Planned'], ['doing', 'In progress'], ['done', 'Done']]
+        .map(([v, l]) => h('option', { value: v, text: l, selected: v === st })));
+    sel.addEventListener('change', () => {
+      state.certStatus[c.id] = sel.value;
+      save();
+      card.classList.toggle('is-done', sel.value === 'done' || held);
+      renderCerts(state.data);
+    });
+    const actions = h('div', { class: 'cert-actions' },
+      h('a', { href: c.url, target: '_blank', rel: 'noopener', text: 'Official page' }),
+      sel);
+    if (!held) {
+      const add = h('button', { type: 'button', class: 'linkbtn', text: 'Add to my resume' });
+      add.addEventListener('click', () => addCertToResume(c));
+      actions.append(add);
+    }
+    card.append(actions);
+    return card;
+  }
+  function certMatchesFilter(c) {
+    if (certUI.india && !c.india) return false;
+    if (certUI.cost !== 'all' && c.type !== certUI.cost) return false;
+    const q = certUI.q.trim().toLowerCase();
+    if (!q) return true;
+    return (c.name + ' ' + c.provider + ' ' + c.why + ' ' + (c.skills || []).join(' ')).toLowerCase().includes(q);
+  }
+  function renderCertList(d, missing) {
     const all = $('allCerts');
     all.textContent = '';
+    let shown = 0;
     TRACKS.forEach(t => {
+      const list = CERTS.filter(c => c.track === t.id && certMatchesFilter(c));
+      if (!list.length) return;
+      shown += list.length;
       const sec = h('section', { class: 'track' }, h('h3', { text: t.name }), h('p', { text: t.note }));
-      CERTS.filter(c => c.track === t.id).forEach(c => sec.append(h('div', { class: 'cert-row' }, h('span', { class: 'cname', text: c.name + (heldCert(d, c) ? ' (you have this)' : '') }), certMeta(c), h('p', { class: 'why', text: c.why }))));
+      list.forEach(c => sec.append(certCard(d, c, missing)));
       all.append(sec);
     });
+    $('certCount').textContent = shown + ' of ' + CERTS.length + ' certifications shown';
+    $('certEmpty').hidden = shown > 0;
+  }
+  function renderPerks() {
+    const box = $('perksList');
+    if (box.childElementCount) return;
+    PERKS.forEach(p => box.append(h('div', { class: 'perk-row' },
+      h('span', { class: 'pname', text: p.name }),
+      h('p', { text: p.why }),
+      h('a', { href: p.url, target: '_blank', rel: 'noopener', text: 'Open' }))));
+  }
+  function renderCerts(d, r) {
+    r = r || toResume(d);
+    const missing = missingKeywords(r);
+    const role = ROLE_BY_ID[d.roleId];
+    const plan = certPlan(d, r);
+    $('planBlock').hidden = !plan.length;
+    $('picksIntro').textContent = 'A 90-day plan for ' + (role && role.id !== 'other' ? 'a ' + role.label + ' role' : 'students starting out') + ', cheapest and fastest first, skipping anything already on your resume.';
+    const gl = $('gapLine');
+    const covered = uniq(plan.reduce((acc, p) => acc.concat(gapHits(p.cert, missing)), []));
+    gl.hidden = !covered.length;
+    if (covered.length) {
+      gl.textContent = 'Your keyword check is missing ' + missing.length + ' of ' + r.keywords.length + ' role terms. This plan covers ' + listJoin(covered.slice(0, 5)) + '.';
+    }
+    const ol = $('plan');
+    ol.textContent = '';
+    plan.forEach(p => ol.append(h('li', { class: 'plan-stage' },
+      h('span', { class: 'when', text: p.when }),
+      h('span', { class: 'pname', text: p.cert.name }),
+      certMeta(p.cert),
+      h('p', { class: 'pwhy', text: p.note }))));
+    const done = CERTS.filter(c => certStatusOf(c.id) === 'done' || heldCert(d, c)).length;
+    $('planCount').textContent = done ? plural(done, 'certification') + ' done or already on your resume' : 'Mark one done below and it goes straight onto your resume.';
+    renderCertList(d, missing);
+    renderPerks();
+  }
+  function copyPlanText() {
+    const d = state.data, r = toResume(d);
+    const plan = certPlan(d, r);
+    if (!plan.length) { toast('Choose a target role in step 4 first.'); return; }
+    const role = ROLE_BY_ID[d.roleId];
+    const lines = ['My 90-day certification plan' + (role && role.id !== 'other' ? ' - ' + role.label : ''), ''];
+    plan.forEach(p => {
+      lines.push(p.when.toUpperCase());
+      lines.push('  ' + p.cert.name + ' (' + p.cert.provider + ')');
+      lines.push('  Cost: ' + p.cert.cost + '  |  Time: ' + p.cert.hours);
+      lines.push('  ' + p.cert.url);
+      lines.push('');
+    });
+    const text = lines.join('\n');
+    const fallback = () => toast('Copy failed. Select the plan above and copy it manually.');
+    try { navigator.clipboard.writeText(text).then(() => toast('Plan copied.'), fallback); } catch (e) { fallback(); }
+  }
+  function wireCertControls() {
+    const cf = $('costFilter');
+    const opts = [['all', 'All']].concat(Object.keys(COST_TYPES).map(k => [k, COST_TYPES[k].label]));
+    opts.forEach(([val, label]) => {
+      const b = h('button', { type: 'button', class: 'chip', text: label, 'aria-pressed': String(certUI.cost === val), title: val === 'all' ? 'Show every certification' : COST_TYPES[val].hint });
+      b.addEventListener('click', () => {
+        certUI.cost = val;
+        Array.from(cf.children).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        renderCertList(state.data, missingKeywords(toResume(state.data)));
+      });
+      cf.append(b);
+    });
+    const s = $('certSearch');
+    s.addEventListener('input', () => { certUI.q = s.value; renderCertList(state.data, missingKeywords(toResume(state.data))); });
+    const io = $('indiaOnly');
+    io.addEventListener('change', () => { certUI.india = io.checked; renderCertList(state.data, missingKeywords(toResume(state.data))); });
+    $('copyPlanBtn').addEventListener('click', copyPlanText);
   }
   function selectTab(id, focus) {
     state.tab = id;
@@ -1652,10 +1955,10 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
 
   /* ---------- Events ---------- */
   function wire() {
-    $('startBtn').addEventListener('click', () => { state.data = emptyData(); state.fixesDone = {}; state.example = false; state.step = 1; setView('form'); $(idFor('name')).focus(); });
+    $('startBtn').addEventListener('click', () => { state.data = emptyData(); state.fixesDone = {}; state.certStatus = {}; state.example = false; state.step = 1; setView('form'); $(idFor('name')).focus(); });
     $('continueBtn').addEventListener('click', () => setView('form'));
-    $('exampleBtn').addEventListener('click', () => { state.data = fixData(clone(EXAMPLE)); state.fixesDone = {}; state.example = true; state.step = 1; state.tab = 'resume'; setView('result'); });
-    $('useOwnBtn').addEventListener('click', () => { state.data = emptyData(); state.fixesDone = {}; state.example = false; state.step = 1; setView('form'); });
+    $('exampleBtn').addEventListener('click', () => { state.data = fixData(clone(EXAMPLE)); state.fixesDone = {}; state.certStatus = {}; state.example = true; state.step = 1; state.tab = 'resume'; setView('result'); });
+    $('useOwnBtn').addEventListener('click', () => { state.data = emptyData(); state.fixesDone = {}; state.certStatus = {}; state.example = false; state.step = 1; setView('form'); });
     $('stepForm').addEventListener('submit', (e) => { e.preventDefault(); next(); });
     $('backBtn').addEventListener('click', () => goStep(state.step - 1));
     $('buildBtn').addEventListener('click', build);
@@ -1770,6 +2073,7 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     $('pdfBtn').addEventListener('click', () => download('pdf'));
     $('docxBtn').addEventListener('click', () => download('docx'));
     $('copyBtn').addEventListener('click', copyText);
+    wireCertControls();
     $('hlToggle').addEventListener('change', (e) => { highlight = e.target.checked; renderResult(); });
     $('editBtn').addEventListener('click', () => setEditing(!editing));
     $('answersBtn').addEventListener('click', () => { if (editing) setEditing(false, true); if (state.example) { state.example = false; } setView('form'); });
@@ -1796,7 +2100,7 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     $('resetNo').addEventListener('click', () => { $('resetConfirm').hidden = true; $('resetBtn').hidden = false; });
     $('resetYes').addEventListener('click', () => {
       editing = false;
-      state = { view: 'intro', step: 1, data: emptyData(), fixesDone: {}, example: false, tab: 'resume' };
+      state = { view: 'intro', step: 1, data: emptyData(), fixesDone: {}, certStatus: {}, example: false, tab: 'resume' };
       setView('intro');
       clearSaved();
       toast('Cleared. Your answers are gone from this browser.');
@@ -1810,6 +2114,7 @@ li.current .lbl { background: linear-gradient(transparent 16%, var(--mark) 16%, 
     state.data = fixData(saved.data);
     state.step = Math.min(13, Math.max(1, Number(saved.step) || 1));
     state.fixesDone = (saved.fixesDone && typeof saved.fixesDone === 'object') ? saved.fixesDone : {};
+    state.certStatus = (saved.certStatus && typeof saved.certStatus === 'object') ? saved.certStatus : {};
     state.example = !!saved.example;
   }
   const startView = saved && saved.view === 'result' && S(state.data.name) ? 'result' : (saved && saved.view === 'form' && hasContent(state.data) ? 'form' : 'intro');
